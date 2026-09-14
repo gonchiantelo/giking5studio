@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function POST() {
   return NextResponse.json(
-    { error: "Función de auto-subtítulos deshabilitada temporalmente." }, 
+    { error: "OpenAI temporalmente deshabilitado." },
     { status: 501 }
   );
 }
