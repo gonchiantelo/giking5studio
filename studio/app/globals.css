@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+:root {
+  --black: #0a0a0c;
+  --panel: #131318;
+  --panel-line: #232230;
+  --ember: #b5432b;
+  --moon: #9fb4d1;
+  --paper: #ece7e0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--black);
+  color: var(--paper);
+  font-family: "Inter", sans-serif;
+  overflow: hidden; /* The studio manages its own scroll */
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--panel);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--panel-line);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--moon);
+}
+
+/* Drag handle cursor */
+.drag-handle {
+  cursor: grab;
+}
+.drag-handle:active {
+  cursor: grabbing;
+}

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comité A&R | Goking5</title>
+    
+    <!-- Supabase CDN v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@1,9..144,400..900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --black: #0a0a0c;
+            --panel: #131318;
+            --panel-line: #232230;
+            --ember: #b5432b;
+            --moon: #9fb4d1;
+            --paper: #ece7e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--black);
+            color: var(--paper);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4rem;
+            letter-spacing: 2px;
+            color: var(--paper);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .subtitle {
+            font-family: 'Fraunces', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: var(--moon);
+            line-height: 1.4;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 4rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .track-card {
+            background-color: var(--panel);
+            border: 1px solid var(--panel-line);
+            border-radius: 4px;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .track-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--moon);
+        }
+
+        .track-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: var(--paper);
+            line-height: 1.4;
+        }
+
+        .play-btn {
+            background: none;
+            border: 2px solid var(--moon);
+            color: var(--moon);
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+            transition: all 0.2s ease;
+        }
+
+        .play-btn:hover {
+            border-color: var(--paper);
+            color: var(--paper);
+        }
+
+        .vote-btn {
+            background-color: var(--ember);
+            color: var(--paper);
+            border: none;
+            padding: 0.8rem 2rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 0; /* Brutalista */
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            transition: opacity 0.2s ease, background-color 0.2s ease;
+            margin-bottom: 1rem;
+        }
+
+        .vote-btn:hover {
+            opacity: 0.9;
+        }
+
+        .vote-btn.voted {
+            background-color: var(--panel-line);
+            color: var(--moon);
+            pointer-events: none;
+        }
+
+        .vote-count {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: var(--moon);
+            margin-top: auto;
+        }
+
+        .minigame-section {
+            background-color: var(--panel);
+            border: 1px solid var(--panel-line);
+            border-radius: 4px;
+            padding: 3rem 2rem;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .minigame-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: var(--paper);
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .minigame-btn {
+            background: transparent;
+            color: var(--moon);
+            border: 1px solid var(--moon);
+            padding: 0.7rem 2rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .minigame-btn:hover {
+            background-color: var(--moon);
+            color: var(--black);
+        }
+
+        .quote-container {
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1rem;
+        }
+
+        .quote-text {
+            font-family: 'Fraunces', serif;
+            font-style: italic;
+            font-size: 1.4rem;
+            color: var(--ember);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            line-height: 1.4;
+        }
+
+        .quote-text.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Comité A&R</h1>
+        <p class="subtitle">Ustedes deciden cuál de estas maquetas inéditas sale el próximo mes.</p>
+    </header>
+
+    <main class="grid">
+        <!-- Track 1 -->
+        <article class="track-card" data-track-id="1">
+            <h2 class="track-title">Opción 01<br>Electrónica / Trap</h2>
+            <!-- Reemplazar 'URL_AUDIO_1' por la URL pública del Storage de Supabase -->
+            <audio id="audio-1" src="URL_AUDIO_1"></audio>
+            <button class="play-btn" onclick="togglePlay(1)">▶</button>
+            <button class="vote-btn" onclick="voteTrack(1)">Votar</button>
+            <div class="vote-count" id="count-1">0</div>
+        </article>
+
+        <!-- Track 2 -->
+        <article class="track-card" data-track-id="2">
+            <h2 class="track-title">Opción 02<br>Rock Romántico</h2>
+            <!-- Reemplazar 'URL_AUDIO_2' por la URL pública del Storage de Supabase -->
+            <audio id="audio-2" src="URL_AUDIO_2"></audio>
+            <button class="play-btn" onclick="togglePlay(2)">▶</button>
+            <button class="vote-btn" onclick="voteTrack(2)">Votar</button>
+            <div class="vote-count" id="count-2">0</div>
+        </article>
+
+        <!-- Track 3 -->
+        <article class="track-card" data-track-id="3">
+            <h2 class="track-title">Opción 03<br>Reggaetón Oscuro</h2>
+            <!-- Reemplazar 'URL_AUDIO_3' por la URL pública del Storage de Supabase -->
+            <audio id="audio-3" src="URL_AUDIO_3"></audio>
+            <button class="play-btn" onclick="togglePlay(3)">▶</button>
+            <button class="vote-btn" onclick="voteTrack(3)">Votar</button>
+            <div class="vote-count" id="count-3">0</div>
+        </article>
+    </main>
+
+    <section class="minigame-section">
+        <h2 class="minigame-title">El Oráculo del Descanso</h2>
+        <button class="minigame-btn" onclick="generateQuote()">DESCANSAME</button>
+        <div class="quote-container">
+            <p class="quote-text" id="quote-display"></p>
+        </div>
+    </section>
+
+    <script>
+        // ==========================================
+        // 1. CONFIGURACIÓN SUPABASE
+        // ==========================================
+        // Reemplaza estas constantes con tus keys de proyecto en Supabase
+        const SUPABASE_URL = '';
+        const SUPABASE_ANON_KEY = '';
+        
+        let supabase;
+        if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+            // Inicialización de cliente Supabase
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // ==========================================
+        // 2. LÓGICA DE REPRODUCCIÓN (AUDIO)
+        // ==========================================
+        const totalTracks = 3;
+        
+        function togglePlay(trackId) {
+            const currentAudio = document.getElementById(`audio-${trackId}`);
+            const currentBtn = document.querySelector(`article[data-track-id="${trackId}"] .play-btn`);
+
+            // Pausar cualquier otro audio activo y resetear botones a ▶
+            for (let i = 1; i <= totalTracks; i++) {
+                if (i !== trackId) {
+                    const otherAudio = document.getElementById(`audio-${i}`);
+                    const otherBtn = document.querySelector(`article[data-track-id="${i}"] .play-btn`);
+                    otherAudio.pause();
+                    otherBtn.textContent = '▶';
+                }
+            }
+
+            // Alternar el estado Play/Pause de la pista actual
+            if (currentAudio.paused) {
+                // currentAudio.play(); // Descomentar cuando tengas las URLs de audio reales
+                currentBtn.textContent = '⏸';
+            } else {
+                // currentAudio.pause(); // Descomentar cuando tengas las URLs de audio reales
+                currentBtn.textContent = '▶';
+            }
+        }
+
+        // ==========================================
+        // 3. LÓGICA DE VOTOS (DATABASE)
+        // ==========================================
+        
+        // Cargar los votos reales al cargar la página
+        async function fetchVotes() {
+            if (!supabase) return;
+
+            try {
+                // Selecciona votos de la tabla (ajusta 'maquetas_votos' si se llama distinto)
+                const { data, error } = await supabase
+                    .from('maquetas_votos')
+                    .select('track_id, votos');
+
+                if (error) throw error;
+
+                if (data) {
+                    data.forEach(row => {
+                        const countElement = document.getElementById(`count-${row.track_id}`);
+                        if (countElement) {
+                            countElement.textContent = row.votos;
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("Error al cargar votos:", error);
+            }
+        }
+
+        // Enviar voto y actualizar UI
+        async function voteTrack(trackId) {
+            const btn = document.querySelector(`article[data-track-id="${trackId}"] .vote-btn`);
+            const countElement = document.getElementById(`count-${trackId}`);
+            
+            // 1. Feedback visual inmediato
+            btn.textContent = '¡VOTADO!';
+            btn.classList.add('voted');
+
+            // 2. Optimistic UI update (sumar 1 visualmente rápido)
+            let currentVotes = parseInt(countElement.textContent);
+            countElement.textContent = currentVotes + 1;
+
+            if (supabase) {
+                try {
+                    // Obtener el valor actual exacto de la base de datos
+                    const { data: currentData, error: fetchError } = await supabase
+                        .from('maquetas_votos')
+                        .select('votos')
+                        .eq('track_id', trackId)
+                        .single();
+                        
+                    if (fetchError) throw fetchError;
+
+                    // Actualizar sumando +1
+                    const newTotal = currentData.votos + 1;
+                    const { error: updateError } = await supabase
+                        .from('maquetas_votos')
+                        .update({ votos: newTotal })
+                        .eq('track_id', trackId);
+
+                    if (updateError) throw updateError;
+                    
+                    // Asegurar que la UI muestra el dato real guardado
+                    countElement.textContent = newTotal;
+                    
+                } catch (error) {
+                    console.error("Error al registrar el voto:", error);
+                    // Si falla, revertimos el voto visual
+                    countElement.textContent = currentVotes;
+                }
+            }
+
+            // 3. Restaurar botón después de 2 segundos
+            setTimeout(() => {
+                btn.textContent = 'VOTAR';
+                btn.classList.remove('voted');
+            }, 2000);
+        }
+
+        // ==========================================
+        // 4. MINIJUEGO: EL ORÁCULO DEL DESCANSO
+        // ==========================================
+        const descansos = [
+            "Cenicero de moto: totalmente al pedo.",
+            "Mosquito de calabozo: chupás sangre encerrado.",
+            "Espejo roto: te miran y da mala suerte.",
+            "Camión de sandías: te descargás a mano.",
+            "Radio de pueblo: repetís lo que ponen todos."
+        ];
+
+        function generateQuote() {
+            const display = document.getElementById('quote-display');
+            
+            // Ocultar texto actual
+            display.classList.remove('visible');
+            
+            // Esperar que la opacidad baje a 0 antes de inyectar el nuevo texto
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * descansos.length);
+                display.textContent = `"${descansos[randomIndex]}"`;
+                
+                // Forzar reflujo y aplicar la clase visible para el fade-in
+                requestAnimationFrame(() => {
+                    display.classList.add('visible');
+                });
+            }, 500); // 500ms de transición configurada en el CSS
+        }
+
+        // Inicializar al cargar el DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchVotes();
+        });
+    </script>
+</body>
+</html>

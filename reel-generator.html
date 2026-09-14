@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Reels v3.0 | Goking5</title>
+
+    <!-- Google Fonts: Bebas Neue + Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ================================================
+           VARIABLES Y RESET
+        ================================================ */
+        :root {
+            --black:      #0a0a0c;
+            --panel:      #131318;
+            --panel-line: #232230;
+            --ember:      #b5432b;
+            --moon:       #9fb4d1;
+            --paper:      #ece7e0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #111114;
+            font-family: 'Inter', sans-serif;
+            color: var(--paper);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem 1rem 4rem;
+            gap: 2rem;
+        }
+
+        /* ================================================
+           PANEL DE CONTROL
+        ================================================ */
+        .control-panel {
+            width: 100%;
+            max-width: 420px;
+            background: var(--panel);
+            border: 1px solid var(--panel-line);
+            border-radius: 4px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .panel-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem;
+            color: var(--ember);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-title span {
+            font-size: 0.85rem;
+            color: var(--moon);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            opacity: 0.7;
+            align-self: flex-end;
+            padding-bottom: 2px;
+        }
+
+        .section-sep {
+            border: none;
+            border-top: 1px solid var(--panel-line);
+            margin: 0;
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--moon);
+            opacity: 0.5;
+            margin-bottom: 0.6rem;
+        }
+
+        label.field-label {
+            font-size: 0.8rem;
+            color: var(--moon);
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            background: var(--black);
+            border: 1px solid var(--panel-line);
+            border-radius: 2px;
+            color: var(--paper);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            padding: 0.8rem;
+            resize: vertical;
+            min-height: 90px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus { border-color: var(--moon); }
+
+        .file-upload-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--black);
+            border: 1px dashed var(--panel-line);
+            border-radius: 2px;
+            color: var(--moon);
+            padding: 0.75rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .file-upload-btn:hover {
+            border-color: var(--moon);
+            color: var(--paper);
+        }
+
+        .file-upload-btn input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-btn.has-file {
+            border-color: var(--ember);
+            color: var(--ember);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--ember);
+        }
+
+        .btn-sync {
+            background-color: var(--ember);
+            color: var(--paper);
+            border: none;
+            padding: 1rem;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            width: 100%;
+            transition: opacity 0.2s;
+            border-radius: 2px;
+        }
+
+        .btn-sync:hover { opacity: 0.85; }
+
+        .btn-play {
+            background-color: var(--moon);
+            color: var(--black);
+            border: none;
+            padding: 1rem;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            width: 100%;
+            transition: opacity 0.2s;
+            border-radius: 2px;
+        }
+
+        .btn-play:hover { opacity: 0.85; }
+
+        .btn-row {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--panel-line);
+            color: var(--moon);
+            padding: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.2s;
+            border-radius: 2px;
+        }
+
+        .btn-secondary:hover { border-color: var(--moon); color: var(--paper); }
+
+        .hint {
+            font-size: 0.72rem;
+            color: var(--moon);
+            opacity: 0.7;
+            line-height: 1.5;
+            background: rgba(159, 180, 209, 0.1);
+            padding: 0.8rem;
+            border-radius: 4px;
+        }
+
+        /* ================================================
+           PANTALLA REEL (9:16)
+        ================================================ */
+        .reel-wrapper {
+            width: min(400px, 88vw);
+            aspect-ratio: 9 / 16;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .reel-screen {
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--panel-line);
+        }
+
+        #bg-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            display: none;
+        }
+
+        .reel-overlay {
+            position: absolute;
+            inset: 0;
+            background: #000;
+            opacity: 0.5;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .word-stage {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            padding: 1.5rem;
+            text-align: center;
+            line-height: 0.95;
+            font-family: 'Bebas Neue', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .word-token {
+            display: inline-block;
+            color: var(--paper);
+            font-size: clamp(3rem, 15vw, 6rem);
+            text-shadow: 3px 3px 12px rgba(0,0,0,0.8), -1px -1px 4px rgba(0,0,0,0.5);
+            margin: 0;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .word-token.accent { color: var(--ember); }
+
+        @keyframes slam {
+            0%   { transform: scale(2.5);  opacity: 0; }
+            40%  { transform: scale(0.92); opacity: 1; }
+            70%  { transform: scale(1.06); }
+            100% { transform: scale(1);    opacity: 1; }
+        }
+
+        .anim-slam {
+            animation: slam 120ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .reel-watermark {
+            position: absolute;
+            bottom: 1.2rem;
+            right: 1.2rem;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.9rem;
+            color: var(--ember);
+            letter-spacing: 2px;
+            opacity: 0.55;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 1.2rem;
+            left: 1.2rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: var(--ember);
+            color: var(--paper);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            z-index: 4;
+            display: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .status-badge.recording {
+            display: block;
+            background: var(--ember);
+            animation: pulse 1s infinite;
+        }
+        
+        .status-badge.playback {
+            display: block;
+            background: var(--moon);
+            color: var(--black);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .reel-screen:fullscreen {
+            background: var(--black);
+            border: none;
+        }
+        .reel-screen:-webkit-full-screen {
+            background: var(--black);
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <div class="panel-title">
+            ⚡ Generador de Reels <span>v3.0 SYNC</span>
+        </div>
+
+        <div>
+            <p class="section-label">Fondo de media</p>
+            <label class="file-upload-btn" id="file-upload-label">
+                📁 Subir Video Base
+                <input type="file" id="media-input" accept="video/*" onchange="handleMediaUpload(this)">
+            </label>
+        </div>
+        
+        <div>
+            <label class="field-label">Oscurecimiento del fondo</label>
+            <input type="range" id="overlay-range" min="0" max="0.95" step="0.05" value="0.5" oninput="updateOverlay(this.value)">
+        </div>
+
+        <hr class="section-sep">
+
+        <div>
+            <p class="section-label">Guion (rodeá con *asteriscos* para pintar en rojo)</p>
+            <textarea id="script-input" placeholder='Ej: Bo, *papanatas*, escuchá *esto*...'></textarea>
+        </div>
+
+        <div class="hint">
+            🎙️ <strong>CÓMO SINCRONIZAR:</strong><br>
+            1. Hacé clic en "INICIAR SYNC". El video arrancará.<br>
+            2. Presioná la <strong>BARRA ESPACIADORA</strong> al ritmo de tu voz (o la pista) para atrapar el timestamp de cada palabra.<br>
+            3. Al terminar, usá "REPRODUCIR RESULTADO".
+        </div>
+
+        <button class="btn-sync" onclick="startSyncMode()">🔴 INICIAR SYNC</button>
+        <button class="btn-play" onclick="startPlaybackMode()">▶ REPRODUCIR RESULTADO</button>
+        
+        <div class="btn-row">
+            <button class="btn-secondary" onclick="stopAll()">■ DETENER</button>
+            <button class="btn-secondary" onclick="toggleFullscreen()">⛶ PANTALLA COMPLETA</button>
+        </div>
+    </div>
+
+    <div class="reel-wrapper">
+        <div class="reel-screen" id="reel-screen">
+            <div class="status-badge" id="status-badge">REC</div>
+            <!-- Video con playsinline para mobile -->
+            <video id="bg-video" playsinline></video>
+            <div class="reel-overlay" id="reel-overlay"></div>
+            <div class="word-stage" id="word-stage">
+                <span style="font-family:'Bebas Neue',sans-serif; font-size:clamp(1.4rem,7vw,2.8rem); color:var(--moon); opacity:0.35;">
+                    Esperando sincronización...
+                </span>
+            </div>
+            <div class="reel-watermark">GOKING5</div>
+        </div>
+    </div>
+
+    <script>
+        const scriptInput = document.getElementById('script-input');
+        const bgVideo = document.getElementById('bg-video');
+        const wordStage = document.getElementById('word-stage');
+        const overlayEl = document.getElementById('reel-overlay');
+        const fileLabel = document.getElementById('file-upload-label');
+        const statusBadge = document.getElementById('status-badge');
+        const reelScreen = document.getElementById('reel-screen');
+
+        let words = [];
+        let syncMode = false;
+        let playbackMode = false;
+        let currentSyncIndex = 0;
+        let currentPlaybackIndex = 0;
+        let playbackRaf = null;
+
+        function handleMediaUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const url = URL.createObjectURL(file);
+            bgVideo.src = url;
+            bgVideo.style.display = 'block';
+
+            fileLabel.classList.add('has-file');
+            fileLabel.childNodes[0].textContent = file.name.length > 22
+                ? file.name.substring(0, 22) + '…'
+                : file.name;
+                
+            // Limpiar estado previo
+            words = [];
+            stopAll();
+        }
+
+        function updateOverlay(val) {
+            overlayEl.style.opacity = val;
+        }
+
+        function parseWords(text) {
+            return text.trim().split(/\s+/).filter(w => w.length > 0).map(w => {
+                const isAccent = w.startsWith('*') && w.endsWith('*') && w.length > 2;
+                return { 
+                    text: isAccent ? w.slice(1, -1) : w, 
+                    accent: isAccent,
+                    time: null 
+                };
+            });
+        }
+
+        function displayWord(wordObj) {
+            wordStage.innerHTML = '';
+            const span = document.createElement('span');
+            span.className = 'word-token anim-slam' + (wordObj.accent ? ' accent' : '');
+            span.textContent = wordObj.text;
+            wordStage.appendChild(span);
+        }
+
+        function startSyncMode() {
+            const raw = scriptInput.value.trim();
+            if (!raw) return alert("Escribí un guion primero, fiera.");
+            if (!bgVideo.src) return alert("Subí un video de fondo primero.");
+
+            stopAll();
+            
+            words = parseWords(raw);
+            currentSyncIndex = 0;
+            syncMode = true;
+            
+            statusBadge.textContent = 'SYNC REC (ESPACIO)';
+            statusBadge.className = 'status-badge recording';
+            
+            wordStage.innerHTML = '<span style="font-family: Inter; font-size: 1rem; color: var(--moon);">Presioná ESPACIO para empezar...</span>';
+            
+            bgVideo.currentTime = 0;
+            bgVideo.play();
+            
+            // Quitar el foco del botón para que la barra espaciadora no lo vuelva a presionar
+            document.activeElement.blur(); 
+        }
+
+        function recordSyncTime() {
+            if (!syncMode || currentSyncIndex >= words.length) return;
+            
+            const word = words[currentSyncIndex];
+            word.time = bgVideo.currentTime;
+            
+            displayWord(word);
+            
+            currentSyncIndex++;
+            
+            if (currentSyncIndex >= words.length) {
+                setTimeout(() => {
+                    syncMode = false;
+                    statusBadge.style.display = 'none';
+                    wordStage.innerHTML = '<span style="font-family: Bebas Neue; color:var(--moon); font-size:2.5rem; opacity:0.8;">SYNC COMPLETADA ✓</span>';
+                    bgVideo.pause();
+                }, 800); 
+            }
+        }
+
+        function startPlaybackMode() {
+            if (words.length === 0 || words[0].time === null) {
+                return alert("Primero tenés que sincronizar el texto presionando ESPACIO en el modo SYNC.");
+            }
+
+            stopAll();
+            playbackMode = true;
+            currentPlaybackIndex = 0;
+            
+            statusBadge.textContent = 'PLAYBACK';
+            statusBadge.className = 'status-badge playback';
+            
+            wordStage.innerHTML = '';
+            
+            bgVideo.currentTime = 0;
+            bgVideo.play();
+            
+            checkPlaybackTime();
+        }
+
+        function checkPlaybackTime() {
+            if (!playbackMode) return;
+            
+            if (currentPlaybackIndex < words.length) {
+                let nextWord = words[currentPlaybackIndex];
+                if (nextWord.time !== null && bgVideo.currentTime >= nextWord.time) {
+                    displayWord(nextWord);
+                    currentPlaybackIndex++;
+                }
+            }
+            
+            playbackRaf = requestAnimationFrame(checkPlaybackTime);
+        }
+
+        function stopAll() {
+            syncMode = false;
+            playbackMode = false;
+            if (playbackRaf) cancelAnimationFrame(playbackRaf);
+            bgVideo.pause();
+            statusBadge.style.display = 'none';
+            wordStage.innerHTML = '';
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                reelScreen.requestFullscreen().catch(err => {
+                    alert('No se pudo activar pantalla completa: ' + err.message);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Listener de la barra espaciadora para la sincronización
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && syncMode) {
+                e.preventDefault(); 
+                recordSyncTime();
+            }
+        });
+    </script>
+</body>
+</html>
