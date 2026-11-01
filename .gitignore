@@ -49,6 +49,16 @@ ffmpeg-release-macos64-static.zip
 /ravix-studio/bin/ffmpeg
 /ravix-studio/bin/ffprobe
 /ravix-studio/frontend/dist/
+**/node_modules/
+**/.venv/
+**/venv/
 *.mp4
 *.mov
 *.mkv
+*.webm
+*.avi
+*.m4v
+*.3gp
+*.wmv
+*.mpeg
+*.mpg

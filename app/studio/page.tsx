@@ -1,7 +1,7 @@
 import StudioLayout from "@/components/studio/StudioLayout";
 
 export const metadata = {
-  title: "Studio | Goking5",
+  title: "RAVIX Studio",
 };
 
 export default function StudioPage() {
