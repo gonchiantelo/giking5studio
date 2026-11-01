@@ -5,7 +5,15 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 import { useStudioStore } from "@/store/studioStore";
 
-const CDN_BASE = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
+const CDN_BASE = "https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd";
+const FONT_URLS: Record<string, string> = {
+  "Bebas Neue": "https://raw.githubusercontent.com/google/fonts/refs/heads/main/ofl/bebasneue/BebasNeue-Regular.ttf",
+  Inter: "https://raw.githubusercontent.com/google/fonts/refs/heads/main/ofl/inter/Inter%5Bopsz,wght%5D.ttf",
+  Fraunces: "https://raw.githubusercontent.com/google/fonts/refs/heads/main/ofl/fraunces/Fraunces%5BSOFT,WONK,opsz,wght%5D.ttf",
+  Montserrat: "https://raw.githubusercontent.com/google/fonts/refs/heads/main/ofl/montserrat/Montserrat%5Bwght%5D.ttf",
+  Anton: "https://raw.githubusercontent.com/google/fonts/refs/heads/main/ofl/anton/Anton-Regular.ttf",
+  "Permanent Marker": "https://fonts.gstatic.com/s/permanentmarker/v16/Fh4uPib9Iyv2ucM6pGQMWimMp004Hao.ttf",
+};
 
 export function useFFmpeg() {
   const ffmpegRef = useRef<FFmpeg | null>(null);
@@ -54,6 +62,7 @@ export function useFFmpeg() {
     setIsExporting(true);
     setExportProgress(0);
 
+    let exportPhase = "writing inputs";
     try {
       // ── 1. Write input files to ffmpeg's virtual FS ───────
       for (let i = 0; i < videoClips.length; i++) {
@@ -66,10 +75,23 @@ export function useFFmpeg() {
         await ffmpeg.writeFile(`input_a${i}.mp3`, data);
       }
 
-      // 1.5. Write custom fonts to virtual FS
+      // FFmpeg's virtual filesystem needs actual font files for drawtext.
+      const requiredFonts = new Map<string, string>();
+      for (const subtitle of subtitles) {
+        const customFont = customFonts.find((font) => font.name === subtitle.style.fontFamily);
+        if (customFont) continue;
+
+        const fontFile = `${subtitle.style.fontFamily.replace(/\s+/g, "")}.ttf`;
+        const fontUrl = FONT_URLS[subtitle.style.fontFamily];
+        if (fontUrl) requiredFonts.set(fontFile, fontUrl);
+      }
+      for (const [fontFile, fontUrl] of requiredFonts) {
+        await ffmpeg.writeFile(fontFile, await fetchFile(fontUrl));
+      }
+
+      // Write custom fonts to virtual FS.
       for (const font of customFonts) {
         const data = await fetchFile(font.file);
-        // Using the original file name assuming it has correct extension
         await ffmpeg.writeFile(font.file.name, data);
       }
 
@@ -161,11 +183,12 @@ export function useFFmpeg() {
           fontFile = customFont.file.name;
         } else {
           switch (style.fontFamily) {
-            case "Bebas Neue": fontFile = "BebasNeue-Regular.ttf"; break;
-            case "Fraunces": fontFile = "Fraunces-Regular.ttf"; break;
-            case "Montserrat": fontFile = "Montserrat-Regular.ttf"; break;
-            case "Anton": fontFile = "Anton-Regular.ttf"; break;
-            case "Permanent Marker": fontFile = "PermanentMarker-Regular.ttf"; break;
+            case "Bebas Neue": fontFile = "BebasNeue.ttf"; break;
+            case "Fraunces": fontFile = "Fraunces.ttf"; break;
+            case "Montserrat": fontFile = "Montserrat.ttf"; break;
+            case "Anton": fontFile = "Anton.ttf"; break;
+            case "Permanent Marker": fontFile = "PermanentMarker.ttf"; break;
+            case "Inter": fontFile = "Inter.ttf"; break;
           }
         }
 
@@ -227,6 +250,7 @@ export function useFFmpeg() {
       }
 
       // ── 3. Execute FFmpeg ────────────────────────────────
+      exportPhase = "encoding video";
       const filterComplex = filterParts.join(";");
 
       const args = [
@@ -253,9 +277,13 @@ export function useFFmpeg() {
         "output.mp4",
       ];
 
-      await ffmpeg.exec(args);
+      const exitCode = await ffmpeg.exec(args);
+      if (exitCode !== 0) {
+        throw new Error(`FFmpeg exited with code ${exitCode}`);
+      }
 
       // ── 4. Read output and trigger download ─────────────
+      exportPhase = "reading output";
       const rawData = await ffmpeg.readFile("output.mp4");
       const uint8 = rawData as Uint8Array;
       const plainBuffer = uint8.buffer.slice(
@@ -269,7 +297,9 @@ export function useFFmpeg() {
       a.href = url;
       a.download = "goking5-reel.mp4";
       a.click();
-      URL.revokeObjectURL(url);
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      throw new Error(`FFmpeg failed while ${exportPhase}: ${String(error)}`);
     } finally {
       setIsExporting(false);
     }

@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RAVIX Studio
 
-## Getting Started
+RAVIX Studio is a browser-based vertical-video editor built with Next.js, React, Zustand, and FFmpeg.wasm. The main editor lives at `/studio`; the root route redirects there. The separate `ravix-studio/frontend` Vite directory is an unused starter shell and is not the application entry point.
 
-First, run the development server:
+## Run the editor
+
+Requirements: Node.js 20.9 or newer and npm.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev -- --port 5173
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:5173/studio>. Import a video or image from the Media panel, edit it on the timeline, add subtitles in the Text inspector, then choose **Renderizar Reel**. The first export downloads FFmpeg.wasm and the selected subtitle font from their public CDNs.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Backend
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The optional FastAPI service and its current API scope are documented in [ravix-studio/README.md](ravix-studio/README.md). It is a separate prototype and is not required by the browser editor.
 
-## Learn More
+## Specification
 
-To learn more about Next.js, take a look at the following resources:
+See [ravix-studio/SPEC.md](ravix-studio/SPEC.md) for the editor workflow, architecture, and known limitations.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Media and binaries
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Do not commit private footage, uploads, local databases, virtual environments, or FFmpeg executables. On macOS, install both `ffmpeg` and `ffprobe` with `brew install ffmpeg`; other operating systems can use the official FFmpeg downloads at <https://ffmpeg.org/download.html>. See the backend guide for executable path overrides.

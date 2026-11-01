@@ -23,7 +23,7 @@ function fontFamilyToCss(font: string): string {
     case "Montserrat":       return "'Montserrat', sans-serif";
     case "Anton":            return "'Anton', sans-serif";
     case "Permanent Marker": return "'Permanent Marker', cursive";
-    default:                 return "var(--font-inter), sans-serif";
+    default:                 return `"${font}", var(--font-inter), sans-serif`;
   }
 }
 

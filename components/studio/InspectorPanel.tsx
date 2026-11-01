@@ -282,12 +282,12 @@ function SubtitleInspector({
             onChange={async (e) => {
               const file = e.target.files?.[0];
               if (!file) return;
-              const fontName = file.name.split(".")[0];
-              const url = URL.createObjectURL(file);
-              const fontFace = new FontFace(fontName, `url(${url})`);
+              const fontUrl = URL.createObjectURL(file);
+              const fontName = file.name.split('.')[0];
+              const customFont = new FontFace(fontName, `url(${fontUrl})`);
               try {
-                const loadedFace = await fontFace.load();
-                document.fonts.add(loadedFace);
+                const loadedFont = await customFont.load();
+                document.fonts.add(loadedFont);
                 onAddCustomFont(file, fontName);
               } catch (err) {
                 console.error("Error loading font", err);

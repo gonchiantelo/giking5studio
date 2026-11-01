@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+python-multipart
+ffmpeg-python
+pydantic
+torch
+silero-vad
+soundfile

@@ -14,8 +14,8 @@ const bebasNeue = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
-  title: "Goking5 Studio",
-  description: "Editor de Reels 9:16. Autogestión pura.",
+  title: "RAVIX Studio",
+  description: "Editor de video vertical 9:16 en el navegador.",
 };
 
 export default function RootLayout({

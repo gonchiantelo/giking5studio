@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+ffmpeg_static/
+ffmpeg-static.zip
+ffmpeg-release-macos64-static.zip
+/ravix-studio/backend/.venv/
+/ravix-studio/backend/app/media/
+/ravix-studio/backend/app/ravix.db
+/ravix-studio/bin/ffmpeg
+/ravix-studio/bin/ffprobe
+/ravix-studio/frontend/dist/
+*.mp4
+*.mov
+*.mkv

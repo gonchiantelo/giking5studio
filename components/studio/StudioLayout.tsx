@@ -31,7 +31,7 @@ export default function StudioLayout() {
             className="text-2xl tracking-widest"
             style={{ fontFamily: "var(--font-bebas)", color: "var(--ember)" }}
           >
-            Goking5 Studio
+            RAVIX Studio
           </h1>
           <span
             className="text-xs uppercase tracking-widest px-2 py-0.5 rounded-sm"
